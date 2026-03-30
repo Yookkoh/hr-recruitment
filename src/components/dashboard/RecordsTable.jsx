@@ -39,7 +39,7 @@ export default function RecordsTable({ records, loading, onDelete }) {
         <table className="min-w-full divide-y divide-gray-100 text-sm">
           <thead className="bg-gray-50">
             <tr>
-              {['Atoll','Island','Requested By','Position','Division','Candidate','Status','Stage','Joined','Salary', role === 'HR' ? '' : null]
+              {['Atoll','Island','Requested By','Position','Division','Candidate','Status','Stage','Joined','Salary', ['recruiter', 'admin'].includes(role) ? '' : null]
                 .filter(Boolean)
                 .map(col => (
                   <th key={col} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
@@ -65,7 +65,7 @@ export default function RecordsTable({ records, loading, onDelete }) {
                 <td className="px-4 py-3 whitespace-nowrap"><StageBadge value={row.recruitment_stage} /></td>
                 <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatDate(row.joined_date)}</td>
                 <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatCurrency(row.salary)}</td>
-                {role === 'HR' && (
+                {['recruiter', 'admin'].includes(role) && (
                   <td className="px-4 py-3 whitespace-nowrap" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center gap-2">
                       <button

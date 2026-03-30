@@ -2,18 +2,17 @@ import { useState } from 'react'
 import { useUsers } from '../../hooks/useUsers'
 import Toast from '../shared/Toast'
 
-const ROLES = ['HR', 'DCOO', 'MD', 'admin']
+const ROLES = ['recruiter', 'executive', 'admin']
 
 const ROLE_COLOR = {
-  HR:    'bg-blue-100 text-blue-700',
-  DCOO:  'bg-purple-100 text-purple-700',
-  MD:    'bg-green-100 text-green-700',
-  admin: 'bg-red-100 text-red-700',
+  admin:     'bg-red-100 text-red-700',
+  recruiter: 'bg-blue-100 text-blue-700',
+  executive: 'bg-purple-100 text-purple-700',
 }
 
 export default function UsersPage() {
   const { users, loading, error, createUser, deleteUser } = useUsers()
-  const [form, setForm]               = useState({ email: '', full_name: '', role: 'HR' })
+  const [form, setForm]               = useState({ email: '', full_name: '', role: 'recruiter' })
   const [creating, setCreating]       = useState(false)
   const [newCreds, setNewCreds]       = useState(null)
   const [toast, setToast]             = useState(null)
@@ -24,7 +23,7 @@ export default function UsersPage() {
     try {
       const result = await createUser(form.email, form.role, form.full_name)
       setNewCreds({ email: form.email, tempPassword: result.tempPassword })
-      setForm({ email: '', full_name: '', role: 'HR' })
+      setForm({ email: '', full_name: '', role: 'recruiter' })
     } catch (err) {
       setToast({ message: err.message, type: 'error' })
     } finally {

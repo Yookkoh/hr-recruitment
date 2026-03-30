@@ -18,4 +18,4 @@ export const STAGE_COLORS = {
   Closed:     'bg-gray-100 text-gray-700',
 }
 
-export const ROLES = { HR: 'HR', DCOO: 'DCOO', MD: 'MD' }
+export const ROLES = { admin: 'admin', recruiter: 'recruiter', executive: 'executive' }

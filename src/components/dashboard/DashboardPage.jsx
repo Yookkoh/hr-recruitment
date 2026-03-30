@@ -34,7 +34,7 @@ export default function DashboardPage() {
           <p className="text-sm text-gray-500 mt-0.5">{records.length} record{records.length !== 1 ? 's' : ''}</p>
         </div>
         <div className="flex items-center gap-2">
-          {role === 'HR' && (
+          {['recruiter', 'admin'].includes(role) && (
             <button
               onClick={() => navigate('/records/new')}
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"

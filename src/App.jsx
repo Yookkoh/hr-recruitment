@@ -24,8 +24,8 @@ export default function App() {
               <Route index element={<DashboardPage />} />
               <Route path="dashboard" element={<DashboardPage />} />
 
-              {/* HR only */}
-              <Route element={<ProtectedRoute allowedRoles={['HR']} />}>
+              {/* recruiter + admin only */}
+              <Route element={<ProtectedRoute allowedRoles={['recruiter', 'admin']} />}>
                 <Route path="records/new"       element={<RecordFormPage />} />
                 <Route path="records/:id/edit"  element={<RecordFormPage />} />
                 <Route path="records/bulk"      element={<BulkUploadPage />} />

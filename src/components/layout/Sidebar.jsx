@@ -44,10 +44,10 @@ export default function Sidebar({ onClose }) {
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         <NavItem to="/" end icon="📋" label="Dashboard" />
 
-        {role === 'HR' && (
+        {['recruiter', 'admin'].includes(role) && (
           <NavItem to="/records/new"  icon="➕" label="Add Record" />
         )}
-        {role === 'HR' && (
+        {['recruiter', 'admin'].includes(role) && (
           <NavItem to="/records/bulk" icon="📥" label="Bulk Upload" />
         )}
         {role === 'admin' && (
