@@ -69,7 +69,7 @@ export default function ShareModal({ open, onClose, records, filters }) {
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-3 px-6 py-3 border-b border-gray-100 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-gray-100 shrink-0 sm:px-6 sm:gap-3">
           <button
             onClick={handleJpg}
             disabled={!!loading}

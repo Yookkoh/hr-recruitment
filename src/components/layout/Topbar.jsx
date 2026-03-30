@@ -1,9 +1,10 @@
 import { useAuth } from '../../contexts/AuthContext'
 
 const ROLE_COLORS = {
-  HR:   'bg-blue-100 text-blue-700',
-  DCOO: 'bg-purple-100 text-purple-700',
-  MD:   'bg-green-100 text-green-700',
+  HR:    'bg-blue-100 text-blue-700',
+  DCOO:  'bg-purple-100 text-purple-700',
+  MD:    'bg-green-100 text-green-700',
+  admin: 'bg-red-100 text-red-700',
 }
 
 export default function Topbar({ onMenuClick }) {

@@ -8,8 +8,8 @@ export default function FilterBar({ filters, onChange }) {
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3">
-      <div className="min-w-[160px]">
+    <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-end">
+      <div className="sm:min-w-[160px]">
         <label className="block text-xs font-medium text-gray-600 mb-1">Atoll</label>
         <select
           value={filters.atoll ?? ''}
@@ -21,7 +21,7 @@ export default function FilterBar({ filters, onChange }) {
         </select>
       </div>
 
-      <div className="min-w-[160px]">
+      <div className="sm:min-w-[160px]">
         <label className="block text-xs font-medium text-gray-600 mb-1">Requested By</label>
         <select
           value={filters.requestedBy ?? ''}
@@ -36,7 +36,7 @@ export default function FilterBar({ filters, onChange }) {
       {(filters.atoll || filters.requestedBy) && (
         <button
           onClick={() => onChange({ atoll: '', requestedBy: '' })}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+          className="col-span-2 sm:col-span-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
         >
           Clear filters
         </button>

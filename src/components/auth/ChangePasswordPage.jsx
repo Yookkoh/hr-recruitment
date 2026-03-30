@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function ChangePasswordPage() {
-  const { user, refreshProfile } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [password, setPassword]   = useState('')
   const [confirm, setConfirm]     = useState('')
   const [loading, setLoading]     = useState(false)
@@ -19,15 +17,19 @@ export default function ChangePasswordPage() {
     setLoading(true)
     setError(null)
     try {
+      // Update profile flag FIRST so even if auth update triggers re-renders,
+      // the user won't get looped back to this page
+      await supabase.from('profiles').update({ must_change_password: false }).eq('id', user.id)
+
       const { error: updateError } = await supabase.auth.updateUser({ password })
       if (updateError) throw updateError
 
-      await supabase.from('profiles').update({ must_change_password: false }).eq('id', user.id)
-      await refreshProfile()
-      navigate('/', { replace: true })
+      // Hard reload — clears all stale auth state and starts fresh
+      window.location.replace('/')
     } catch (err) {
+      // If password update failed, restore the flag
+      await supabase.from('profiles').update({ must_change_password: true }).eq('id', user.id)
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
