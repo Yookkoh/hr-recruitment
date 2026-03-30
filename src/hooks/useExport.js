@@ -13,11 +13,11 @@ export function useExport(exportRef) {
   const exportAsPdf = useCallback(async () => {
     const { default: html2canvas } = await import('html2canvas')
     const { jsPDF }                = await import('jspdf')
-    const canvas   = await html2canvas(exportRef.current, { scale: 2, useCORS: true })
-    const imgData  = canvas.toDataURL('image/png')
-    const pdf      = new jsPDF({ orientation: 'landscape', unit: 'px', format: 'a4' })
-    const pdfW     = pdf.internal.pageSize.getWidth()
-    const pdfH     = (canvas.height * pdfW) / canvas.width
+    const canvas  = await html2canvas(exportRef.current, { scale: 2, useCORS: true })
+    const imgData = canvas.toDataURL('image/png')
+    const pdfW    = canvas.width / 2
+    const pdfH    = canvas.height / 2
+    const pdf     = new jsPDF({ orientation: pdfW > pdfH ? 'landscape' : 'portrait', unit: 'px', format: [pdfW, pdfH] })
     pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH)
     pdf.save(`recruitment-${Date.now()}.pdf`)
   }, [exportRef])
