@@ -117,7 +117,15 @@ export default function BulkUploadPage() {
     setErrors([])
     setDone(false)
 
-    const { read, utils } = await import('xlsx')
+    let read, utils
+    try {
+      const xlsx = await import('xlsx')
+      read  = xlsx.read
+      utils = xlsx.utils
+    } catch {
+      setErrors(['Failed to load Excel parser. Try refreshing the page.'])
+      return
+    }
     const buf   = await file.arrayBuffer()
     const wb    = read(buf, { type: 'array', cellDates: false })
     const sheet = wb.Sheets[wb.SheetNames[0]]
@@ -169,7 +177,7 @@ export default function BulkUploadPage() {
       setToast({ message: `${validRows.length} records uploaded successfully.`, type: 'success' })
       setTimeout(() => navigate('/'), 2000)
     } catch (err) {
-      setToast({ message: err.message, type: 'error' })
+      setToast({ message: `Upload failed: ${err.message}`, type: 'error' })
     } finally {
       setUploading(false)
     }

@@ -27,12 +27,21 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    // Safety: never stay loading more than 8 seconds
-    const timeout = setTimeout(() => setLoading(false), 8000)
+    // Safety: never stay loading more than 6 seconds
+    const timeout = setTimeout(() => setLoading(false), 6000)
 
     supabase.auth.getSession().then(async ({ data: { session }, error }) => {
       clearTimeout(timeout)
-      if (error) setAuthError(error.message)
+      if (error) {
+        // Stale/invalid token — clear it so user goes to login cleanly
+        if (error.message?.includes('Refresh Token')) {
+          await supabase.auth.signOut()
+        } else {
+          setAuthError(error.message)
+        }
+        setLoading(false)
+        return
+      }
       setSession(session)
       if (session?.user) {
         setUser(session.user)
@@ -47,7 +56,12 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // On token refresh, only update session — don't re-fetch profile (it hasn't changed)
+      if (event === 'TOKEN_REFRESHED') {
+        setSession(session)
+        return
+      }
       setSession(session)
       if (session?.user) {
         setUser(session.user)
