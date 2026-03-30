@@ -56,11 +56,10 @@ export function useFilterOptions() {
   const [requestedBys, setRequestedBys] = useState([])
 
   useEffect(() => {
-    supabase.from('recruitment').select('atoll').then(({ data }) => {
-      if (data) setAtolls([...new Set(data.map(r => r.atoll?.trim()).filter(Boolean))].sort())
-    })
-    supabase.from('recruitment').select('requested_by').then(({ data }) => {
-      if (data) setRequestedBys([...new Set(data.map(r => r.requested_by?.trim()).filter(Boolean))].sort())
+    supabase.from('recruitment').select('atoll, requested_by').then(({ data }) => {
+      if (!data) return
+      setAtolls([...new Set(data.map(r => r.atoll?.trim()).filter(Boolean))].sort())
+      setRequestedBys([...new Set(data.map(r => r.requested_by?.trim()).filter(Boolean))].sort())
     })
   }, [])
 

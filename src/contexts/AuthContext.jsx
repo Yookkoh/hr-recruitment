@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -9,66 +9,46 @@ export function AuthProvider({ children }) {
   const [role, setRole]       = useState(null)
   const [mustChangePassword, setMustChangePassword] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [authError, setAuthError] = useState(null)
-  const profileFetching = useRef(false)
 
   async function fetchProfile(userId) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role, full_name, must_change_password')
-        .eq('id', userId)
-        .single()
-      if (error) throw error
-      return data
-    } catch (err) {
-      console.error('Profile fetch error:', err.message)
-      return null
-    }
+    const { data } = await supabase
+      .from('profiles')
+      .select('role, full_name, must_change_password')
+      .eq('id', userId)
+      .single()
+    return data
   }
 
   useEffect(() => {
-    // Safety: never stay loading more than 6 seconds
-    const timeout = setTimeout(() => setLoading(false), 6000)
+    let cancelled = false
 
-    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-      clearTimeout(timeout)
-      if (error) {
-        // Stale/invalid token — clear it so user goes to login cleanly
-        if (error.message?.includes('Refresh Token')) {
-          await supabase.auth.signOut()
-        } else {
-          setAuthError(error.message)
+    async function init() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (cancelled) return
+        setSession(session)
+        if (session?.user) {
+          setUser(session.user)
+          const profile = await fetchProfile(session.user.id)
+          if (!cancelled) {
+            setRole(profile?.role ?? null)
+            setMustChangePassword(profile?.must_change_password ?? false)
+          }
         }
-        setLoading(false)
-        return
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      setSession(session)
-      if (session?.user) {
-        profileFetching.current = true
-        setUser(session.user)
-        const profile = await fetchProfile(session.user.id)
-        setRole(profile?.role ?? null)
-        setMustChangePassword(profile?.must_change_password ?? false)
-        profileFetching.current = false
-      }
-      setLoading(false)
-    }).catch(err => {
-      clearTimeout(timeout)
-      setAuthError(err.message)
-      setLoading(false)
-    })
+    }
+
+    init()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // On token refresh, only update session — don't re-fetch profile
-      if (event === 'TOKEN_REFRESHED') {
-        setSession(session)
-        return
-      }
+      // INITIAL_SESSION is handled by getSession above — skip to avoid duplicate fetch
+      if (event === 'INITIAL_SESSION') return
+      if (event === 'TOKEN_REFRESHED') { setSession(session); return }
+
       setSession(session)
       if (session?.user) {
-        // Skip if getSession() is already fetching the profile
-        if (profileFetching.current) return
         setUser(session.user)
         const profile = await fetchProfile(session.user.id)
         setRole(profile?.role ?? null)
@@ -80,7 +60,7 @@ export function AuthProvider({ children }) {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => { cancelled = true; subscription.unsubscribe() }
   }, [])
 
   async function signOut() {
@@ -95,7 +75,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, role, mustChangePassword, loading, authError, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ session, user, role, mustChangePassword, loading, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   )
