@@ -50,7 +50,9 @@ export default function Sidebar({ onClose }) {
         {role === 'HR' && (
           <NavItem to="/records/bulk" icon="📥" label="Bulk Upload" />
         )}
-
+        {role === 'admin' && (
+          <NavItem to="/admin/users" icon="👥" label="Users" />
+        )}
       </nav>
     </div>
   )

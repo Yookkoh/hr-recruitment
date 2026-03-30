@@ -2,11 +2,12 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './routes/ProtectedRoute'
 import LoginPage from './components/auth/LoginPage'
+import ChangePasswordPage from './components/auth/ChangePasswordPage'
 import AppShell from './components/layout/AppShell'
 import DashboardPage from './components/dashboard/DashboardPage'
 import RecordFormPage from './components/records/RecordFormPage'
 import BulkUploadPage from './components/records/BulkUploadPage'
-import ExportPage from './components/export/ExportPage'
+import UsersPage from './components/admin/UsersPage'
 
 export default function App() {
   return (
@@ -16,6 +17,9 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route element={<ProtectedRoute />}>
+            {/* Force-password-change page — no AppShell */}
+            <Route path="/change-password" element={<ChangePasswordPage />} />
+
             <Route element={<AppShell />}>
               <Route index element={<DashboardPage />} />
               <Route path="dashboard" element={<DashboardPage />} />
@@ -27,9 +31,9 @@ export default function App() {
                 <Route path="records/bulk"      element={<BulkUploadPage />} />
               </Route>
 
-              {/* DCOO + MD only */}
-              <Route element={<ProtectedRoute allowedRoles={['DCOO', 'MD']} />}>
-                <Route path="export" element={<ExportPage />} />
+              {/* Admin only */}
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route path="admin/users" element={<UsersPage />} />
               </Route>
             </Route>
           </Route>
