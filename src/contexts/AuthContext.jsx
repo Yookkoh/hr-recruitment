@@ -8,24 +8,35 @@ export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null)
   const [role, setRole]       = useState(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState(null)
 
   async function fetchRole(userId) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('role, full_name')
-      .eq('id', userId)
-      .single()
-    return data
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role, full_name')
+        .eq('id', userId)
+        .single()
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Profile fetch error:', err.message)
+      return null
+    }
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error) setAuthError(error.message)
       setSession(session)
       if (session?.user) {
         setUser(session.user)
         const profile = await fetchRole(session.user.id)
         setRole(profile?.role ?? null)
       }
+      setLoading(false)
+    }).catch(err => {
+      setAuthError(err.message)
       setLoading(false)
     })
 
@@ -49,7 +60,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, role, loading, signOut }}>
+    <AuthContext.Provider value={{ session, user, role, loading, authError, signOut }}>
       {children}
     </AuthContext.Provider>
   )
