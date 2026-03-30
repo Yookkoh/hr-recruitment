@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -10,6 +10,7 @@ export function AuthProvider({ children }) {
   const [mustChangePassword, setMustChangePassword] = useState(false)
   const [loading, setLoading] = useState(true)
   const [authError, setAuthError] = useState(null)
+  const profileFetching = useRef(false)
 
   async function fetchProfile(userId) {
     try {
@@ -44,10 +45,12 @@ export function AuthProvider({ children }) {
       }
       setSession(session)
       if (session?.user) {
+        profileFetching.current = true
         setUser(session.user)
         const profile = await fetchProfile(session.user.id)
         setRole(profile?.role ?? null)
         setMustChangePassword(profile?.must_change_password ?? false)
+        profileFetching.current = false
       }
       setLoading(false)
     }).catch(err => {
@@ -57,13 +60,15 @@ export function AuthProvider({ children }) {
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // On token refresh, only update session — don't re-fetch profile (it hasn't changed)
+      // On token refresh, only update session — don't re-fetch profile
       if (event === 'TOKEN_REFRESHED') {
         setSession(session)
         return
       }
       setSession(session)
       if (session?.user) {
+        // Skip if getSession() is already fetching the profile
+        if (profileFetching.current) return
         setUser(session.user)
         const profile = await fetchProfile(session.user.id)
         setRole(profile?.role ?? null)

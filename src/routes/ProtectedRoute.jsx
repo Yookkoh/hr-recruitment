@@ -5,7 +5,8 @@ export default function ProtectedRoute({ allowedRoles }) {
   const { session, role, mustChangePassword, loading } = useAuth()
   const location = useLocation()
 
-  if (loading) {
+  // Wait until both session AND role are resolved
+  if (loading || (session && role === null)) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
