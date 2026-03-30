@@ -21,7 +21,7 @@ export default function Topbar({ onMenuClick }) {
         </svg>
       </button>
 
-      <span className="text-sm font-semibold text-gray-700 lg:hidden">HR Recruitment</span>
+      <span className="text-sm font-semibold text-gray-700 lg:hidden">Staff Tracker</span>
 
       <div className="ml-auto flex items-center gap-3">
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${ROLE_COLORS[role] ?? 'bg-gray-100 text-gray-600'}`}>

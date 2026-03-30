@@ -5,12 +5,14 @@ import { useRecruitment } from '../../hooks/useRecruitment'
 import FilterBar from './FilterBar'
 import RecordsTable from './RecordsTable'
 import Toast from '../shared/Toast'
+import ShareModal from '../shared/ShareModal'
 
 export default function DashboardPage() {
   const { role } = useAuth()
-  const navigate = useNavigate()
-  const [filters, setFilters] = useState({ atoll: '', requestedBy: '' })
-  const [toast, setToast]     = useState(null)
+  const navigate  = useNavigate()
+  const [filters, setFilters]   = useState({ atoll: '', requestedBy: '' })
+  const [toast, setToast]       = useState(null)
+  const [shareOpen, setShareOpen] = useState(false)
 
   const { records, loading, error, remove } = useRecruitment(filters)
 
@@ -26,27 +28,28 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Recruitment Records</h1>
+          <h1 className="text-xl font-bold text-gray-900">Staff Records</h1>
           <p className="text-sm text-gray-500 mt-0.5">{records.length} record{records.length !== 1 ? 's' : ''}</p>
         </div>
-        {role === 'HR' && (
+        <div className="flex items-center gap-2">
+          {role === 'HR' && (
+            <button
+              onClick={() => navigate('/records/new')}
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
+            >
+              + Add Record
+            </button>
+          )}
           <button
-            onClick={() => navigate('/records/new')}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
+            onClick={() => setShareOpen(true)}
+            disabled={loading || records.length === 0}
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors shadow-sm"
           >
-            + Add Record
+            📤 Share
           </button>
-        )}
-        {(role === 'DCOO' || role === 'MD') && (
-          <button
-            onClick={() => navigate('/export')}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
-          >
-            📤 Export / Share
-          </button>
-        )}
+        </div>
       </div>
 
       <FilterBar filters={filters} onChange={setFilters} />
@@ -56,6 +59,13 @@ export default function DashboardPage() {
       )}
 
       <RecordsTable records={records} loading={loading} onDelete={handleDelete} />
+
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        records={records}
+        filters={filters}
+      />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>

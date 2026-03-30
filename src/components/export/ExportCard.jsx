@@ -12,7 +12,7 @@ const ExportCard = forwardRef(function ExportCard({ records, filters }, ref) {
       {/* Header */}
       <div className="mb-6 flex items-start justify-between border-b border-gray-200 pb-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Recruitment Progress Report</h1>
+          <h1 className="text-xl font-bold text-gray-900">Staff Tracker — Recruitment Report</h1>
           <p className="mt-1 text-sm text-gray-500">
             Atoll: <strong>{atollLabel}</strong> &nbsp;·&nbsp; Requested By: <strong>{requesterLabel}</strong>
           </p>

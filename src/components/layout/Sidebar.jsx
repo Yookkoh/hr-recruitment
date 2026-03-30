@@ -28,9 +28,9 @@ export default function Sidebar({ onClose }) {
       <div className="flex h-14 items-center justify-between border-b border-gray-200 px-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-xs font-bold text-white">
-            HR
+            ST
           </div>
-          <span className="font-bold text-gray-900">Recruitment</span>
+          <span className="font-bold text-gray-900">Staff Tracker</span>
         </div>
         {onClose && (
           <button onClick={onClose} className="rounded p-1 text-gray-400 hover:text-gray-600 lg:hidden">
@@ -51,9 +51,6 @@ export default function Sidebar({ onClose }) {
           <NavItem to="/records/bulk" icon="📥" label="Bulk Upload" />
         )}
 
-        {(role === 'DCOO' || role === 'MD') && (
-          <NavItem to="/export" icon="📤" label="Export / Share" />
-        )}
       </nav>
     </div>
   )
