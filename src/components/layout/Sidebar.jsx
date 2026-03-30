@@ -45,7 +45,10 @@ export default function Sidebar({ onClose }) {
         <NavItem to="/" end icon="📋" label="Dashboard" />
 
         {role === 'HR' && (
-          <NavItem to="/records/new" icon="➕" label="Add Record" />
+          <NavItem to="/records/new"  icon="➕" label="Add Record" />
+        )}
+        {role === 'HR' && (
+          <NavItem to="/records/bulk" icon="📥" label="Bulk Upload" />
         )}
 
         {(role === 'DCOO' || role === 'MD') && (

@@ -5,6 +5,7 @@ import LoginPage from './components/auth/LoginPage'
 import AppShell from './components/layout/AppShell'
 import DashboardPage from './components/dashboard/DashboardPage'
 import RecordFormPage from './components/records/RecordFormPage'
+import BulkUploadPage from './components/records/BulkUploadPage'
 import ExportPage from './components/export/ExportPage'
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
               <Route element={<ProtectedRoute allowedRoles={['HR']} />}>
                 <Route path="records/new"       element={<RecordFormPage />} />
                 <Route path="records/:id/edit"  element={<RecordFormPage />} />
+                <Route path="records/bulk"      element={<BulkUploadPage />} />
               </Route>
 
               {/* DCOO + MD only */}
