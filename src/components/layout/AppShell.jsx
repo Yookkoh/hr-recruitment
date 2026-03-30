@@ -1,36 +1,30 @@
-import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import InstallAppBanner from './InstallAppBanner'
+import MobileDock from './MobileDock'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
 export default function AppShell() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-20 bg-black/40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <div className="relative flex min-h-[100svh] overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-100/80 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-sky-100/80 blur-3xl" />
+      </div>
 
-      {/* Sidebar — fixed on desktop, drawer on mobile */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-30 w-56 transform border-r border-gray-200 transition-transform duration-200 lg:static lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+      <aside className="relative hidden w-64 shrink-0 lg:block">
+        <Sidebar />
       </aside>
 
-      {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <Outlet />
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Topbar />
+        <main className="flex-1 overflow-y-auto overscroll-y-contain">
+          <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+6.5rem)] md:px-6 md:py-4 lg:gap-6 lg:px-8 lg:py-6 lg:pb-6">
+            <Outlet />
+          </div>
         </main>
+        <InstallAppBanner />
+        <MobileDock />
       </div>
     </div>
   )

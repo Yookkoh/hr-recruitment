@@ -2,10 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 async function invoke(action, body = {}) {
-  const { data: { session } } = await supabase.auth.getSession()
   const { data, error } = await supabase.functions.invoke('manage-users', {
     body: { action, ...body },
-    headers: { Authorization: `Bearer ${session?.access_token}` },
   })
   if (error) throw new Error(error.message)
   return data
@@ -42,5 +40,15 @@ export function useUsers() {
     setUsers(prev => prev.filter(u => u.id !== userId))
   }
 
-  return { users, loading, error, createUser, deleteUser, refetch: loadUsers }
+  async function updateUserRole(userId, role) {
+    const data = await invoke('update-role', { userId, role })
+    setUsers(prev => prev.map(user => (
+      user.id === userId
+        ? { ...user, role: data.user?.role ?? role }
+        : user
+    )))
+    return data
+  }
+
+  return { users, loading, error, createUser, deleteUser, updateUserRole, refetch: loadUsers }
 }

@@ -1,9 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html {
+    font-family: 'Manrope', 'Segoe UI', sans-serif;
+  }
+
+  html,
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    min-height: 100%;
+  }
+
+  body {
+    @apply min-h-screen text-slate-900 antialiased;
+    background-color: #edf3f9;
+    background-image:
+      radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 28rem),
+      radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.1), transparent 24rem),
+      linear-gradient(180deg, #f7fafc 0%, #edf3f9 100%);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+    transition: background-color 220ms ease, color 220ms ease;
+  }
+
+  html.dark body {
+    color: #e2e8f0;
+    background-color: #020617;
+    background-image:
+      radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 26rem),
+      radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.14), transparent 24rem),
+      linear-gradient(180deg, #020617 0%, #0f172a 100%);
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: rgba(37, 99, 235, 0.18);
+    color: #0f172a;
+  }
+
+  html.dark ::selection {
+    background: rgba(96, 165, 250, 0.28);
+    color: #eff6ff;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    transition: box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  a,
+  button,
+  [role='button'] {
+    touch-action: manipulation;
+  }
+
+  html.dark input,
+  html.dark select,
+  html.dark textarea {
+    color: #e2e8f0;
+    background-color: rgba(2, 6, 23, 0.88);
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    color: #64748b;
+  }
+
+  @media (max-width: 1023px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
   }
 }

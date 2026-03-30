@@ -1,7 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { registerSW } from 'virtual:pwa-register'
 import App from './App.jsx'
+import { ThemeProvider } from './contexts/ThemeContext.jsx'
+import { applyTheme, getInitialTheme } from './lib/theme.js'
 import './index.css'
+
+applyTheme(getInitialTheme())
+registerSW({ immediate: true })
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -30,7 +36,9 @@ class ErrorBoundary extends React.Component {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </ErrorBoundary>
   </React.StrictMode>,
 )
